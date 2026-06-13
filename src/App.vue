@@ -110,12 +110,22 @@
       <div
         class="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-12 gap-y-2 gap-x-4"
       >
-        <img
+        <TooltipProvider
           v-for="character in filteredCharacters"
           :key="character.name"
-          :src="`characters/${character.name}.png`"
-          class="max-h-16 max-w-16 h-full w-full"
-        />
+        >
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <img
+                :src="`characters/${character.name}.png`"
+                class="max-h-16 max-w-16 h-full w-full"
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{{ character.version }}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
     <div class="flex flex-col gap-2">
@@ -142,6 +152,12 @@
 import { Checkbox } from "./components/ui/checkbox";
 import { Label } from "./components/ui/label";
 import { Input } from "./components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./components/ui/tooltip";
 import {
   rarities,
   elements,
