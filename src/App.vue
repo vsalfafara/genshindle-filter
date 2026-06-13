@@ -118,6 +118,23 @@
         />
       </div>
     </div>
+    <div class="flex flex-col gap-2">
+      <h3 class="text-lg font-semibold">Stats</h3>
+      <div class="flex gap-6">
+        <div class="flex flex-col">
+          <h3 class="font-semibold">Elements</h3>
+          <pre>{{ JSON.stringify(statsElement, null, 4) }}</pre>
+        </div>
+        <div class="flex flex-col">
+          <h3 class="font-semibold">Weapons</h3>
+          <pre>{{ JSON.stringify(statsWeapon, null, 4) }}</pre>
+        </div>
+        <div class="flex flex-col">
+          <h3 class="font-semibold">Nation</h3>
+          <pre>{{ JSON.stringify(statsNation, null, 4) }}</pre>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -131,6 +148,7 @@ import {
   weapons,
   nations,
   filterCharacters,
+  type Character,
 } from "./data/data";
 import { ref, watch } from "vue";
 
@@ -145,14 +163,9 @@ const filters = ref({
 
 const filteredCharacters = ref<any>(filterCharacters(filters.value));
 
-// const stats = computed(() => {
-//   const stat = filteredCharacters.value.reduce((acc: any, curr: Character) => {
-//     const element = curr.element;
-//   }, {});
-
-//   console.log(stat);
-//   return stat;
-// });
+const statsElement = ref({});
+const statsWeapon = ref({});
+const statsNation = ref({});
 
 const handleCheckedChange = (
   checked: string | boolean,
@@ -177,6 +190,34 @@ watch(
   () => filters,
   () => {
     filteredCharacters.value = filterCharacters(filters.value);
+
+    statsElement.value = filteredCharacters.value.reduce(
+      (acc: any, curr: Character) => {
+        return {
+          ...acc,
+          [curr.element]: (acc[curr.element] || 0) + 1,
+        };
+      },
+      {},
+    );
+    statsWeapon.value = filteredCharacters.value.reduce(
+      (acc: any, curr: Character) => {
+        return {
+          ...acc,
+          [curr.weapon]: (acc[curr.weapon] || 0) + 1,
+        };
+      },
+      {},
+    );
+    statsNation.value = filteredCharacters.value.reduce(
+      (acc: any, curr: Character) => {
+        return {
+          ...acc,
+          [curr.nation]: (acc[curr.nation] || 0) + 1,
+        };
+      },
+      {},
+    );
   },
   { deep: true },
 );
