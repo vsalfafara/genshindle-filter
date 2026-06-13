@@ -131,7 +131,6 @@ import {
   weapons,
   nations,
   filterCharacters,
-  type Character,
 } from "./data/data";
 import { ref, watch } from "vue";
 
