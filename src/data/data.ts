@@ -982,14 +982,21 @@ export function filterCharacters(filters: Filter) {
   let ltVersionFilter = filters.ltVersion ? filters.ltVersion : 999;
   let gtVersionFilter = filters.gtVersion ? filters.gtVersion : 0;
 
-  return characters.filter((character) => {
-    return (
-      rarityFilter.includes(character.rarity) &&
-      !elementFilter.includes(character.element) &&
-      !weaponFilter.includes(character.weapon) &&
-      !nationFilter.includes(character.nation) &&
-      character.version < ltVersionFilter &&
-      character.version > gtVersionFilter
-    );
-  });
+  return characters
+    .filter((character) => {
+      return (
+        rarityFilter.includes(character.rarity) &&
+        !elementFilter.includes(character.element) &&
+        !weaponFilter.includes(character.weapon) &&
+        !nationFilter.includes(character.nation) &&
+        character.version < ltVersionFilter &&
+        character.version > gtVersionFilter
+      );
+    })
+    .map((character) => {
+      return {
+        ...character,
+        guarantee: false,
+      };
+    });
 }

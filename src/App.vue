@@ -129,10 +129,18 @@
         >
           <Tooltip>
             <TooltipTrigger as-child>
-              <img
-                :src="`characters/${character.name}.png`"
-                class="max-h-16 max-w-16 h-full w-full"
-              />
+              <div class="relative">
+                <img
+                  :src="`characters/${character.name}.png`"
+                  class="max-h-16 max-w-16 h-full w-full"
+                  @mouseenter="() => checkGuarantee(character)"
+                  @mouseleave="() => uncheckGuarantee()"
+                />
+                <div
+                  v-if="character.guarantee"
+                  class="z-10 top-0 left-0 absolute h-15 w-15 rounded-lg bg-green-500 opacity-50"
+                ></div>
+              </div>
             </TooltipTrigger>
             <TooltipContent>
               <p>{{ character.version }}</p>
@@ -234,6 +242,129 @@ const filteredCharacters = ref<any>(filterCharacters(filters.value));
 const statsElement = ref({});
 const statsWeapon = ref({});
 const statsNation = ref({});
+
+const checkGuarantee = (character: any) => {
+  let countsBeforeVersion = {
+    notElement: [],
+    notWeapon: [],
+    notNation: [],
+    notElementAndWeapon: [],
+    notElementAndNation: [],
+    notWeaponAndNation: [],
+    notAny: [],
+  };
+  let countsAfterVersion = {
+    notElement: [],
+    notWeapon: [],
+    notNation: [],
+    notElementAndWeapon: [],
+    notElementAndNation: [],
+    notWeaponAndNation: [],
+    notAny: [],
+  };
+  let countsInVersion = {
+    notElement: [],
+    notWeapon: [],
+    notNation: [],
+    notElementAndWeapon: [],
+    notElementAndNation: [],
+    notWeaponAndNation: [],
+    notAny: [],
+  };
+  filteredCharacters.value.forEach((filteredCharacter: any) => {
+    if (character.name !== filteredCharacter.name) {
+      if (filteredCharacter.version < character.version) {
+        updateGuaranteeStat(character, filteredCharacter, countsBeforeVersion);
+      }
+      if (filteredCharacter.version > character.version) {
+        updateGuaranteeStat(character, filteredCharacter, countsAfterVersion);
+      }
+      if (filteredCharacter.version === character.version) {
+        updateGuaranteeStat(character, filteredCharacter, countsInVersion);
+      }
+    }
+  });
+
+  const temp: any = [];
+
+  Object.keys(countsBeforeVersion).forEach((key: any) => {
+    if (
+      countsBeforeVersion[key as keyof typeof countsBeforeVersion].length === 1
+    )
+      temp.push(
+        ...countsBeforeVersion[key as keyof typeof countsBeforeVersion],
+      );
+  });
+  Object.keys(countsAfterVersion).forEach((key: any) => {
+    if (countsAfterVersion[key as keyof typeof countsAfterVersion].length === 1)
+      temp.push(...countsAfterVersion[key as keyof typeof countsAfterVersion]);
+  });
+  Object.keys(countsInVersion).forEach((key: any) => {
+    if (countsInVersion[key as keyof typeof countsInVersion].length === 1)
+      temp.push(...countsInVersion[key as keyof typeof countsInVersion]);
+  });
+
+  filteredCharacters.value = filteredCharacters.value.map(
+    (filteredCharacter: any) => {
+      const guarantee = temp.find(
+        (tempChar: any) => tempChar.name === filteredCharacter.name,
+      );
+      if (guarantee) filteredCharacter.guarantee = true;
+      return filteredCharacter;
+    },
+  );
+};
+
+const uncheckGuarantee = () => {
+  filteredCharacters.value = filteredCharacters.value.map((character: any) => ({
+    ...character,
+    guarantee: false,
+  }));
+};
+
+const updateGuaranteeStat = (
+  character: any,
+  filteredCharacter: any,
+  counts: any,
+) => {
+  if (
+    character.element !== filteredCharacter.element &&
+    character.weapon === filteredCharacter.weapon &&
+    character.nation === filteredCharacter.nation
+  )
+    counts.notElement.push(filteredCharacter);
+  else if (
+    character.element === filteredCharacter.element &&
+    character.weapon !== filteredCharacter.weapon &&
+    character.nation === filteredCharacter.nation
+  )
+    counts.notWeapon.push(filteredCharacter);
+  else if (
+    character.element === filteredCharacter.element &&
+    character.weapon === filteredCharacter.weapon &&
+    character.nation !== filteredCharacter.nation
+  )
+    counts.notNation.push(filteredCharacter);
+  else if (
+    character.element !== filteredCharacter.element &&
+    character.weapon !== filteredCharacter.weapon &&
+    character.nation === filteredCharacter.nation
+  )
+    counts.notElementAndWeapon.push(filteredCharacter);
+  else if (
+    character.element !== filteredCharacter.element &&
+    character.weapon === filteredCharacter.weapon &&
+    character.nation !== filteredCharacter.nation
+  )
+    counts.notElementAndNation.push(filteredCharacter);
+  else if (
+    character.element === filteredCharacter.element &&
+    character.weapon !== filteredCharacter.weapon &&
+    character.nation !== filteredCharacter.nation
+  )
+    counts.notWeaponAndNation.push(filteredCharacter);
+  else counts.notAny.push(filteredCharacter);
+};
 
 const handleCheckedChange = (
   checked: string | boolean,
