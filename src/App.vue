@@ -3,7 +3,7 @@
     <div class="flex flex-col gap-4 p-2">
       <div class="flex flex-col gap-2">
         <h3 class="text-lg font-semibold">Rarity</h3>
-        <div class="flex gap-2">
+        <div class="flex items-center gap-2">
           <Label
             v-for="rarity in rarities"
             :key="rarity.value"
@@ -23,16 +23,20 @@
       </div>
       <div class="flex flex-col gap-2">
         <h3 class="text-lg font-semibold">Element</h3>
-        <div class="flex gap-2">
+        <div class="flex items-center gap-2">
+          <Button variant="ghost" size="icon" @click="() => reset('element')"
+            ><RotateCcw
+          /></Button>
           <Label
             v-for="element in elements"
             :key="element.value"
             class="hover:bg-accent/50 flex justify-center items-start gap-3 rounded-lg border p-3 has-aria-checked:border-red-600 has-aria-checked:bg-red-50 dark:has-aria-checked:border-red-900 dark:has-aria-checked:bg-red-950"
           >
             <Checkbox
+              :key="elementKey"
               :id="element.value.toString()"
               @update:model-value="
-                (checked) =>
+                (checked: any) =>
                   handleCheckedChange(checked, element.value, 'element')
               "
               class="hidden data-[state=checked]:border-red-600 data-[state=checked]:bg-red-600 data-[state=checked]:text-white dark:data-[state=checked]:border-red-700 dark:data-[state=checked]:bg-red-700"
@@ -43,14 +47,19 @@
       </div>
       <div class="flex flex-col gap-2">
         <h3 class="text-lg font-semibold">Weapon</h3>
-        <div class="flex gap-2">
+        <div class="flex items-center gap-2">
+          <Button variant="ghost" size="icon" @click="() => reset('weapon')"
+            ><RotateCcw
+          /></Button>
           <Label
             v-for="weapon in weapons"
             :key="weapon.value"
             class="hover:bg-accent/50 flex justify-center items-start gap-3 rounded-lg border p-3 has-aria-checked:border-red-600 has-aria-checked:bg-red-50 dark:has-aria-checked:border-red-900 dark:has-aria-checked:bg-red-950"
           >
             <Checkbox
+              :key="weaponKey"
               :id="weapon.value.toString()"
+              :value="weapon.value"
               @update:model-value="
                 (checked) =>
                   handleCheckedChange(checked, weapon.value, 'weapon')
@@ -63,13 +72,17 @@
       </div>
       <div class="flex flex-col gap-2">
         <h3 class="text-lg font-semibold">Nation</h3>
-        <div class="flex gap-2">
+        <div class="flex items-center gap-2">
+          <Button variant="ghost" size="icon" @click="() => reset('nation')"
+            ><RotateCcw
+          /></Button>
           <Label
             v-for="nation in nations"
             :key="nation.value"
             class="hover:bg-accent/50 flex justify-center items-start gap-3 rounded-lg border p-3 has-aria-checked:border-red-600 has-aria-checked:bg-red-50 dark:has-aria-checked:border-red-900 dark:has-aria-checked:bg-red-950"
           >
             <Checkbox
+              :key="nationKey"
               :id="nation.value.toString()"
               @update:model-value="
                 (checked) =>
@@ -149,6 +162,7 @@
 </template>
 
 <script setup lang="ts">
+import { Button } from "./components/ui/button";
 import { Checkbox } from "./components/ui/checkbox";
 import { Label } from "./components/ui/label";
 import { Input } from "./components/ui/input";
@@ -167,8 +181,27 @@ import {
   type Character,
 } from "./data/data";
 import { ref, watch } from "vue";
+import { RotateCcw } from "@lucide/vue";
 
-const filters = ref({
+type Filters = {
+  rarity: (string | number)[];
+  element: (string | number)[];
+  weapon: (string | number)[];
+  nation: (string | number)[];
+  gtVersion: undefined | number;
+  ltVersion: undefined | number;
+};
+
+const elementFilter = ref<any>([]);
+const elementKey = ref<number>(0);
+
+const weaponFilter = ref<any>([]);
+const weaponKey = ref<number>(0);
+
+const nationFilter = ref<any>([]);
+const nationKey = ref<number>(0);
+
+const filters = ref<Filters>({
   rarity: [],
   element: [],
   weapon: [],
@@ -176,6 +209,25 @@ const filters = ref({
   gtVersion: undefined,
   ltVersion: undefined,
 });
+
+const reset = (
+  filter: Exclude<
+    keyof typeof filters.value,
+    "rarity" | "gtVersion" | "ltVersion"
+  >,
+) => {
+  if (filter === "element") {
+    elementFilter.value = [];
+    elementKey.value++;
+  } else if (filter === "weapon") {
+    weaponFilter.value = [];
+    weaponKey.value++;
+  } else if (filter === "nation") {
+    nationFilter.value = [];
+    nationKey.value++;
+  }
+  filters.value[filter] = [];
+};
 
 const filteredCharacters = ref<any>(filterCharacters(filters.value));
 
@@ -186,15 +238,13 @@ const statsNation = ref({});
 const handleCheckedChange = (
   checked: string | boolean,
   value: string | number,
-  filter: keyof typeof filters.value,
+  filter: Exclude<keyof typeof filters.value, "gtVersion" | "ltVersion">,
 ) => {
   const versionFilters = ["gtVersion", "ltVersion"];
   if (!versionFilters.includes(filter)) {
     if (checked) {
-      // @ts-ignore
       filters.value[filter].push(value);
     } else {
-      // @ts-ignore
       filters.value[filter] = filters.value[filter].filter(
         (val) => val !== value,
       );
