@@ -252,6 +252,7 @@ const checkGuarantee = (character: any) => {
     notElementAndNation: [],
     notWeaponAndNation: [],
     notAny: [],
+    all: [],
   };
   let countsAfterVersion = {
     notElement: [],
@@ -261,6 +262,7 @@ const checkGuarantee = (character: any) => {
     notElementAndNation: [],
     notWeaponAndNation: [],
     notAny: [],
+    all: [],
   };
   let countsInVersion = {
     notElement: [],
@@ -270,6 +272,7 @@ const checkGuarantee = (character: any) => {
     notElementAndNation: [],
     notWeaponAndNation: [],
     notAny: [],
+    all: [],
   };
   filteredCharacters.value.forEach((filteredCharacter: any) => {
     if (character.name !== filteredCharacter.name) {
@@ -328,6 +331,12 @@ const updateGuaranteeStat = (
   counts: any,
 ) => {
   if (
+    character.element === filteredCharacter.element &&
+    character.weapon === filteredCharacter.weapon &&
+    character.nation === filteredCharacter.nation
+  ) {
+    counts.all.push(filteredCharacter);
+  } else if (
     character.element !== filteredCharacter.element &&
     character.weapon === filteredCharacter.weapon &&
     character.nation === filteredCharacter.nation
