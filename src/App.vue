@@ -247,7 +247,7 @@ const statsWeapon = ref({});
 const statsNation = ref({});
 
 const checkGuarantee = (character: any) => {
-  let countsBeforeVersion = {
+  const counts = {
     notElement: [],
     notWeapon: [],
     notNation: [],
@@ -257,26 +257,9 @@ const checkGuarantee = (character: any) => {
     notAny: [],
     all: [],
   };
-  let countsAfterVersion = {
-    notElement: [],
-    notWeapon: [],
-    notNation: [],
-    notElementAndWeapon: [],
-    notElementAndNation: [],
-    notWeaponAndNation: [],
-    notAny: [],
-    all: [],
-  };
-  let countsInVersion = {
-    notElement: [],
-    notWeapon: [],
-    notNation: [],
-    notElementAndWeapon: [],
-    notElementAndNation: [],
-    notWeaponAndNation: [],
-    notAny: [],
-    all: [],
-  };
+  let countsBeforeVersion = structuredClone(counts);
+  let countsAfterVersion = structuredClone(counts);
+  let countsInVersion = structuredClone(counts);
   filteredCharacters.value.forEach((filteredCharacter: any) => {
     if (character.name !== filteredCharacter.name) {
       if (filteredCharacter.version < character.version) {
