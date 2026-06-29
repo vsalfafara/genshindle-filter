@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center gap-4 mx-auto max-w-225">
+  <div class="flex flex-col items-center mx-auto max-w-225">
     <div class="flex flex-col gap-4 p-2">
       <div class="flex flex-col gap-2">
         <h3 class="text-lg font-semibold">Rarity</h3>
@@ -247,7 +247,7 @@ const statsWeapon = ref({});
 const statsNation = ref({});
 
 const checkGuarantee = (character: any) => {
-  const counts = {
+  let countsBeforeVersion = {
     notElement: [],
     notWeapon: [],
     notNation: [],
@@ -257,9 +257,26 @@ const checkGuarantee = (character: any) => {
     notAny: [],
     all: [],
   };
-  let countsBeforeVersion = { ...counts };
-  let countsAfterVersion = { ...counts };
-  let countsInVersion = { ...counts };
+  let countsAfterVersion = {
+    notElement: [],
+    notWeapon: [],
+    notNation: [],
+    notElementAndWeapon: [],
+    notElementAndNation: [],
+    notWeaponAndNation: [],
+    notAny: [],
+    all: [],
+  };
+  let countsInVersion = {
+    notElement: [],
+    notWeapon: [],
+    notNation: [],
+    notElementAndWeapon: [],
+    notElementAndNation: [],
+    notWeaponAndNation: [],
+    notAny: [],
+    all: [],
+  };
   filteredCharacters.value.forEach((filteredCharacter: any) => {
     if (character.name !== filteredCharacter.name) {
       if (filteredCharacter.version < character.version) {
@@ -279,31 +296,29 @@ const checkGuarantee = (character: any) => {
   Object.keys(countsBeforeVersion).forEach((key: any) => {
     if (
       countsBeforeVersion[key as keyof typeof countsBeforeVersion].length === 1
-    ) {
+    )
       temp.push(
         ...countsBeforeVersion[key as keyof typeof countsBeforeVersion],
       );
-    }
   });
   Object.keys(countsAfterVersion).forEach((key: any) => {
-    if (
-      countsAfterVersion[key as keyof typeof countsAfterVersion].length === 1
-    ) {
+    if (countsAfterVersion[key as keyof typeof countsAfterVersion].length === 1)
       temp.push(...countsAfterVersion[key as keyof typeof countsAfterVersion]);
-    }
   });
   Object.keys(countsInVersion).forEach((key: any) => {
-    if (countsInVersion[key as keyof typeof countsInVersion].length === 1) {
+    if (countsInVersion[key as keyof typeof countsInVersion].length === 1)
       temp.push(...countsInVersion[key as keyof typeof countsInVersion]);
-    }
   });
 
   filteredCharacters.value = filteredCharacters.value.map(
     (filteredCharacter: any) => {
-      filteredCharacter.guarantee = temp.find(
+      const guarantee = temp.find(
         (tempChar: any) => tempChar.name === filteredCharacter.name,
       );
-      if (filteredCharacter.guarantee) guaranteeCount.value++;
+      if (guarantee) {
+        filteredCharacter.guarantee = true;
+        guaranteeCount.value++;
+      }
       return filteredCharacter;
     },
   );
