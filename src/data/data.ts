@@ -969,6 +969,14 @@ const characters: Character[] = [
     nation: nations[0].value,
     version: 6.6,
   },
+  {
+    name: "Sandrone",
+    rarity: rarities[1].value,
+    element: elements[2].value,
+    weapon: weapons[1].value,
+    nation: nations[7].value,
+    version: 6.7,
+  },
 ];
 
 export function filterCharacters(filters: Filter) {
