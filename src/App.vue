@@ -102,7 +102,7 @@
             type="number"
             placeholder="Before Version"
             min="1"
-            max="6.6"
+            max="6.7"
             step="0.1"
             class="w-33"
           />
