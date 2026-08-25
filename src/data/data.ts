@@ -972,10 +972,26 @@ const characters: Character[] = [
   {
     name: "Sandrone",
     rarity: rarities[1].value,
-    element: elements[2].value,
+    element: elements[1].value,
     weapon: weapons[1].value,
     nation: nations[7].value,
     version: 6.7,
+  },
+  {
+    name: "Odette",
+    rarity: rarities[1].value,
+    element: elements[2].value,
+    weapon: weapons[0].value,
+    nation: nations[7].value,
+    version: 7,
+  },
+  {
+    name: "Alyosha",
+    rarity: rarities[0].value,
+    element: elements[3].value,
+    weapon: weapons[2].value,
+    nation: nations[7].value,
+    version: 7,
   },
 ];
 
