@@ -972,7 +972,7 @@ const characters: Character[] = [
   {
     name: "Sandrone",
     rarity: rarities[1].value,
-    element: elements[1].value,
+    element: elements[2].value,
     weapon: weapons[1].value,
     nation: nations[7].value,
     version: 6.7,
