@@ -111,7 +111,7 @@
             type="number"
             placeholder="After Version"
             min="1"
-            max="7"
+            max="7.1"
             step="0.1"
             class="w-33"
           />
